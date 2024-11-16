@@ -89,15 +89,28 @@ if st.button("Generate Binomial Tree and Value Option"):
 
     # Plotting the convergence of the option value
     st.subheader("Convergence of Option Value with Increasing Steps")
-    steps = range(10, 101, 10)
+    
+    # Dynamically generate steps based on the input M
+    max_steps = max(10, M)  # Ensure at least 10 steps
+    steps = range(10, max_steps + 10, 10)  # Generate steps in increments of 10
+    
+    # Exact value for reference
     exact_value = bs(S0, K, T, r, sigma)[0 if option_type == "C" else 1]
+    
+    # Compute option values for each step
     CRR_values = [CRR_option_value(S0, K, T, r, sigma, option_type, m)[0] for m in steps]
-
+    
+    # Create the plot
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.plot(steps, CRR_values, label="CRR Values", marker="o")
-    ax.axhline(exact_value, color="red", linestyle="--", label="Exact Value (BS Model)")
+    ax.plot(steps, CRR_values, label="CRR Values", marker="o", markersize=5)
+    ax.axhline(exact_value, color="red", linestyle="--", linewidth=1.5, label="Exact Value (BS Model)")
     ax.set_xlabel("Number of Steps (M)")
     ax.set_ylabel("Option Value")
     ax.legend()
     ax.grid(True)
+    
+    # Dynamically set x-axis limits based on steps
+    ax.set_xlim(min(steps), max(steps) + 10)
+    ax.set_ylim(min(CRR_values) * 0.95, max(CRR_values) * 1.05)  # Padding for better visualization
     st.pyplot(fig)
+
